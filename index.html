@@ -3,271 +3,487 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BUMDes Campurejo - Laying Management v4.5</title>
+    <title>BUMDes Campurejo - Laying Management System v4.7</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root { --primary: #2e7d32; --header-bg: #1b5e20; --bg: #f0f2f5; --accent: #ffa000; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; background: var(--bg); color: #333; padding-bottom: 90px; }
+        :root { 
+            --primary: #2e7d32; 
+            --header-bg: #1b5e20; 
+            --bg: #f0f2f5; 
+            --accent: #ffa000; 
+            --white: #ffffff;
+        }
         
-        header { background: var(--header-bg); color: white; padding: 25px 15px; text-align: center; border-radius: 0 0 20px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        header h2 { margin: 0; font-size: 20px; letter-spacing: 0.5px; }
-        header small { opacity: 0.9; font-size: 14px; display: block; margin-top: 4px; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            background: var(--bg); 
+            color: #333; 
+            padding-bottom: 90px; 
+        }
+        
+        header { 
+            background: var(--header-bg); 
+            color: white; 
+            padding: 25px 15px; 
+            text-align: center; 
+            border-radius: 0 0 25px 25px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+        }
+        
+        header h2 { margin: 0; font-size: 22px; letter-spacing: 0.5px; }
+        header small { opacity: 0.8; font-size: 14px; display: block; margin-top: 5px; }
 
         .container { padding: 15px; max-width: 500px; margin: auto; }
         
-        /* Dashboard Card */
-        .card { background: white; padding: 20px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.03); }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        /* Dashboard Stats */
+        .card { 
+            background: var(--white); 
+            padding: 20px; 
+            border-radius: 20px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            border: 1px solid rgba(0,0,0,0.03); 
+        }
         
-        .stat-box { background: #f1f8e9; border: 1px solid #e8f5e9; padding: 15px 10px; border-radius: 12px; text-align: center; }
-        .stat-box h4 { margin: 0; font-size: 11px; color: #666; text-transform: uppercase; }
-        .stat-box p { margin: 8px 0 0; font-weight: bold; color: #2e7d32; font-size: 18px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .stat-box { 
+            background: #f1f8e9; 
+            border: 1px solid #e8f5e9; 
+            padding: 15px 10px; 
+            border-radius: 15px; 
+            text-align: center; 
+        }
+        
+        .stat-box h4 { margin: 0; font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-box p { margin: 8px 0 0; font-weight: bold; color: var(--primary); font-size: 18px; }
 
-        .analisa-box { background: #fff8e1; border-left: 5px solid #ffa000; padding: 15px; border-radius: 8px; margin-top: 10px; }
-        .progress-container { background: #e0e0e0; border-radius: 10px; height: 10px; margin: 10px 0; overflow: hidden; }
-        .progress-bar { background: var(--primary); height: 100%; width: 0%; transition: 0.5s; }
+        /* Progress Bar ROI */
+        .analisa-box { 
+            background: #fff8e1; 
+            border-left: 5px solid var(--accent); 
+            padding: 15px; 
+            border-radius: 10px; 
+            margin-top: 10px; 
+        }
+        
+        .progress-container { 
+            background: #e0e0e0; 
+            border-radius: 10px; 
+            height: 12px; 
+            margin: 12px 0; 
+            overflow: hidden; 
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar { 
+            background: linear-gradient(90deg, #4caf50, #2e7d32); 
+            height: 100%; 
+            width: 0%; 
+            transition: width 0.8s ease-in-out; 
+        }
 
-        /* Form */
-        label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-top: 12px; }
-        input { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; background: #fafafa; font-size: 14px; }
-        button { width: 100%; padding: 14px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 14px; }
+        /* Forms */
+        label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-top: 15px; }
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            margin-top: 6px; 
+            border: 1px solid #ddd; 
+            border-radius: 12px; 
+            box-sizing: border-box; 
+            background: #fafafa; 
+            font-size: 14px; 
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--primary); outline: none; background: #fff; }
+        
+        button { 
+            width: 100%; 
+            padding: 15px; 
+            border: none; 
+            border-radius: 12px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-top: 15px; 
+            font-size: 14px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
         .btn-save { background: var(--header-bg); color: white; }
-        .btn-outline { background: white; color: var(--primary); border: 1px solid var(--primary); }
+        .btn-outline { background: white; color: var(--primary); border: 2px solid var(--primary); }
+        .btn-danger { background: #c62828; color: white; margin-top: 30px; }
 
-        /* Table */
-        .table-container { overflow-x: auto; margin-top: 15px; }
-        table { width: 100%; border-collapse: collapse; font-size: 11px; }
-        table th { background: #f5f5f5; padding: 10px; border: 1px solid #eee; }
-        table td { padding: 10px; border: 1px solid #eee; text-align: center; }
+        /* Table & Reports */
+        .table-container { overflow-x: auto; margin-top: 15px; border-radius: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; background: white; }
+        table th { background: #f5f5f5; padding: 12px 8px; border: 1px solid #eee; color: #444; }
+        table td { padding: 10px 8px; border: 1px solid #eee; text-align: center; }
 
         /* Navigation */
-        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; box-shadow: 0 -2px 15px rgba(0,0,0,0.08); height: 75px; z-index: 100; }
-        .nav-item { flex: 1; text-align: center; padding: 12px 0; color: #9e9e9e; font-size: 12px; cursor: pointer; }
-        .nav-item.active { color: #2e7d32; font-weight: bold; }
-        .nav-item i { display: block; font-size: 22px; margin-bottom: 4px; }
+        nav { 
+            position: fixed; 
+            bottom: 0; 
+            width: 100%; 
+            background: white; 
+            display: flex; 
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1); 
+            height: 80px; 
+            z-index: 1000; 
+        }
+        
+        .nav-item { 
+            flex: 1; 
+            text-align: center; 
+            padding: 15px 0; 
+            color: #9e9e9e; 
+            font-size: 12px; 
+            cursor: pointer; 
+            transition: 0.3s;
+        }
+        
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+        .nav-item i { display: block; font-size: 24px; margin-bottom: 4px; }
 
         .hidden { display: none; }
-        @media print { nav, button, .no-print { display: none !important; } .card { box-shadow: none; border: 1px solid #ddd; } }
+        
+        @media print {
+            nav, button, .no-print { display: none !important; }
+            body { background: white; }
+            .card { box-shadow: none; border: 1px solid #ddd; }
+        }
     </style>
 </head>
 <body>
 
 <header>
     <h2 id="head-nama">BUMDes Campurejo</h2>
-    <small id="head-alamat">Ketahanan Pangan - Manajemen Layer</small>
+    <small>Sistem Manajemen Ayam Petelur & ROI</small>
 </header>
 
 <div class="container">
     <div id="sec-dash">
         <div class="card grid">
-            <div class="stat-box"><h4>Stok Ayam</h4><p id="st-ayam">1000</p></div>
-            <div class="stat-box"><h4>Stok Pakan</h4><p><span id="st-pakan">0</span> <small>kg</small></p></div>
-            <div class="stat-box"><h4>Kas Ops</h4><p id="st-kas">Rp 0</p></div>
-            <div class="stat-box"><h4>Dana Pullet</h4><p id="st-pullet">Rp 0</p></div>
+            <div class="stat-box"><h4>Populasi Ayam</h4><p id="st-ayam">1000</p></div>
+            <div class="stat-box"><h4>Stok Pakan</h4><p><span id="st-pakan">0</span> <small style="font-size: 10px;">kg</small></p></div>
+            <div class="stat-box"><h4>Kas Operasional</h4><p id="st-kas">Rp 0</p></div>
+            <div class="stat-box"><h4>Tabungan Pullet</h4><p id="st-pullet">Rp 0</p></div>
         </div>
 
         <div class="card">
-            <label style="font-size: 14px; margin-top: 0;">Status Pengembalian Modal (ROI):</label>
-            <div id="analisa-content" class="analisa-box">
-                <div id="analisa-text">Memuat analisa...</div>
-                <div class="progress-container"><div id="roi-bar" class="progress-bar"></div></div>
-                <small id="roi-text" style="font-size: 10px; color: #666;"></small>
+            <label style="font-size: 14px; margin-top: 0; color: var(--primary);">Analisa Performa & Investasi</label>
+            <div class="analisa-box">
+                <div id="analisa-text" style="line-height: 1.6; font-size: 13px;">Memuat data analisa...</div>
+                <div class="progress-container">
+                    <div id="roi-bar" class="progress-bar"></div>
+                </div>
+                <small id="roi-text" style="font-size: 11px; color: #555; font-weight: 600;"></small>
             </div>
         </div>
     </div>
 
     <div id="sec-input" class="hidden">
         <div class="card">
-            <h3 style="margin-top:0">Input Produksi</h3>
-            <label>Tanggal</label><input type="date" id="in-tgl">
-            <label>Telur Layak Jual (Kg)</label><input type="number" id="in-kg" step="0.01" placeholder="Berat telur bagus">
-            <label>Telur Rusak/BS (Butir)</label><input type="number" id="in-rusak" placeholder="0">
-            <label>Pakan Terpakai (Kg)</label><input type="number" id="in-pakan" step="0.1" placeholder="Pakan hari ini">
-            <label>Harga Jual (Rp/Kg)</label><input type="number" id="in-harga" placeholder="Harga pasar">
-            <button class="btn-save" onclick="simpanHarian()">Simpan Data</button>
+            <h3 style="margin-top: 0; color: var(--primary);"><i class="fa fa-edit"></i> Catatan Harian</h3>
+            <label>Tanggal Produksi</label>
+            <input type="date" id="in-tgl">
+            <label>Telur Layak Jual (Kg)</label>
+            <input type="number" id="in-kg" step="0.01" placeholder="Masukkan berat total">
+            <label>Telur Rusak / BS (Butir)</label>
+            <input type="number" id="in-rusak" placeholder="0">
+            <label>Pakan Terpakai (Kg)</label>
+            <input type="number" id="in-pakan" step="0.1" placeholder="Berat pakan keluar">
+            <label>Harga Jual Telur (Rp/Kg)</label>
+            <input type="number" id="in-harga" placeholder="Harga hari ini">
+            <button class="btn-save" onclick="simpanHarian()"><i class="fa fa-check-circle"></i> Simpan Produksi</button>
         </div>
     </div>
 
     <div id="sec-rekap" class="hidden">
         <div class="card" id="print-area">
-            <h3 style="text-align:center; margin-top:0">LAPORAN PRODUKSI</h3>
+            <h3 style="text-align: center; margin-top: 0;">LAPORAN BULANAN BUMDes</h3>
             <div class="table-container">
                 <table id="table-rekap">
                     <thead>
-                        <tr><th>Tgl</th><th>Kg Jual</th><th>BS</th><th>FCR</th><th>BEP</th><th>Omzet</th></tr>
+                        <tr>
+                            <th>Tgl</th>
+                            <th>Kg</th>
+                            <th>BS</th>
+                            <th>FCR</th>
+                            <th>BEP</th>
+                            <th>Omzet</th>
+                        </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
             </div>
-            <div id="rekap-total" style="margin-top:15px; font-size:12px; font-weight:bold; line-height:1.6"></div>
+            <div id="rekap-total" style="margin-top: 20px; font-size: 13px; font-weight: bold; border-top: 2px dashed #eee; padding-top: 15px; line-height: 1.8;"></div>
         </div>
-        <button class="btn-save" onclick="window.print()"><i class="fa fa-print"></i> Cetak PDF</button>
-        <button class="btn-save" style="background:#2e7d32" onclick="exportExcel()"><i class="fa fa-file-excel"></i> Export Excel</button>
+        <button class="btn-outline" onclick="window.print()"><i class="fa fa-print"></i> Cetak ke PDF</button>
+        <button class="btn-save" style="background:#2e7d32" onclick="exportExcel()"><i class="fa fa-file-excel"></i> Export ke Excel</button>
     </div>
 
     <div id="sec-admin" class="hidden">
         <div class="card">
-            <h3>Modal & Histori</h3>
-            <label>Total Modal Investasi (Rp)</label>
+            <h3 style="margin-top:0"><i class="fa fa-cogs"></i> Pengaturan Modal</h3>
+            <label>Total Modal Investasi Awal (Rp)</label>
             <input type="number" id="set-modal-awal" placeholder="Contoh: 100000000">
-            <label>Profit Akumulasi Sebelum App (Rp)</label>
-            <input type="number" id="set-profit-lalu" placeholder="Total untung Minggu 17-33">
-            <label>Harga Pakan (Rp/Kg)</label>
+            <label>Profit/Rugi Kumulatif Sebelum App (Rp)</label>
+            <input type="number" id="set-profit-lalu" placeholder="Hasil bersih Okt - Feb">
+            <label>Harga Beli Pakan (Rp/Kg)</label>
             <input type="number" id="set-h-pakan" value="7500">
-            <label>Biaya Ops/Hari (Rp)</label>
+            <label>Biaya Ops Tetap (Gaji+Listrik) / Hari</label>
             <input type="number" id="set-ops" value="50000">
-            <button class="btn-save" onclick="saveSettings()">Simpan Konfigurasi</button>
+            <button class="btn-save" onclick="saveSettings()">Update Konfigurasi</button>
         </div>
 
         <div class="card">
-            <h3>Backup / Restore</h3>
-            <button class="btn-outline" onclick="backupData()"><i class="fa fa-download"></i> Download Backup (.json)</button>
-            <label>Restore dari File</label>
-            <input type="file" id="importFile" accept=".json" style="font-size:11px">
-            <button class="btn-outline" onclick="importData()"><i class="fa fa-upload"></i> Upload & Restore</button>
+            <h3><i class="fa fa-database"></i> Backup & Sinkronisasi</h3>
+            <button class="btn-outline" onclick="backupData()"><i class="fa fa-download"></i> Ambil File Backup (.json)</button>
+            <label style="margin-top: 20px;">Upload File Backup untuk Restore</label>
+            <input type="file" id="importFile" accept=".json">
+            <button class="btn-outline" onclick="importData()"><i class="fa fa-upload"></i> Restore Data</button>
         </div>
 
         <div class="card">
-            <h3>Populasi</h3>
-            <label>Jumlah Ayam (Ekor)</label><input type="number" id="set-ayam">
-            <label>Tambah Pakan (Kg)</label><input type="number" id="set-pakan-tambah">
-            <button class="btn-save" style="background:#fb8c00" onclick="updateStok()">Update Populasi</button>
+            <h3><i class="fa fa-sync"></i> Update Stok Fisik</h3>
+            <label>Jumlah Ayam Saat Ini (Ekor)</label>
+            <input type="number" id="set-ayam" placeholder="1000">
+            <label>Tambah Stok Pakan Masuk (Kg)</label>
+            <input type="number" id="set-pakan-tambah" placeholder="0">
+            <button class="btn-save" style="background: var(--accent); color: #333;" onclick="updateStok()">Perbarui Stok</button>
         </div>
-        <button onclick="resetData()" style="background:#e53935; color:white; font-size:11px; margin-top:10px">RESET TOTAL</button>
+
+        <button class="btn-danger" onclick="resetData()"><i class="fa fa-trash-alt"></i> RESET SEMUA DATA APLIKASI</button>
     </div>
 </div>
 
 <nav>
-    <div class="nav-item active" onclick="nav(this, 'dash')"><i class="fa fa-home"></i>Dash</div>
+    <div class="nav-item active" onclick="nav(this, 'dash')"><i class="fa fa-chart-line"></i>Beranda</div>
     <div class="nav-item" onclick="nav(this, 'input')"><i class="fa fa-plus-circle"></i>Input</div>
-    <div class="nav-item" onclick="nav(this, 'rekap')"><i class="fa fa-list-alt"></i>Rekap</div>
-    <div class="nav-item" onclick="nav(this, 'admin')"><i class="fa fa-database"></i>Admin</div>
+    <div class="nav-item" onclick="nav(this, 'rekap')"><i class="fa fa-file-alt"></i>Laporan</div>
+    <div class="nav-item" onclick="nav(this, 'admin')"><i class="fa fa-user-cog"></i>Admin</div>
 </nav>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('bumdes_v45_pro')) || {
-        config: { modalAwal: 0, profitLalu: 0, hPakan: 7500, ops: 50000, tglMasuk: "2025-10-10", usiaAwal: 16 },
-        stok: { ayam: 1000, pakan: 0, kas: 0, pullet: 0, totalProfitApp: 0 },
+    // Inisialisasi Database Lokal
+    let db = JSON.parse(localStorage.getItem('bumdes_v47_complete')) || {
+        config: { 
+            nama: "BUMDes Campurejo", 
+            modalAwal: 0, 
+            profitLalu: 0, 
+            hPakan: 7500, 
+            ops: 50000, 
+            tglMasuk: "2025-10-10", 
+            usiaAwal: 16 
+        },
+        stok: { 
+            ayam: 1000, 
+            pakan: 0, 
+            kas: 0, 
+            pullet: 0, 
+            totalProfitApp: 0 
+        },
         logs: []
     };
 
+    // Fungsi Navigasi Tab
     function nav(el, target) {
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
         ['dash', 'input', 'rekap', 'admin'].forEach(s => document.getElementById('sec-'+s).classList.add('hidden'));
         document.getElementById('sec-'+target).classList.remove('hidden');
         if(target === 'rekap') renderRekap();
+        if(target === 'admin') loadAdminFields();
     }
 
+    // Update Tampilan Dashboard
     function updateUI() {
         document.getElementById('st-ayam').innerText = db.stok.ayam;
         document.getElementById('st-pakan').innerText = db.stok.pakan.toFixed(1);
         document.getElementById('st-kas').innerText = "Rp " + Math.round(db.stok.kas).toLocaleString();
         document.getElementById('st-pullet').innerText = "Rp " + Math.round(db.stok.pullet).toLocaleString();
         
-        // Umur Ayam
-        const tglRef = new Date(db.config.tglMasuk);
-        const selisihMgg = Math.floor(((new Date()) - tglRef) / (1000 * 60 * 60 * 24 * 7));
-        const umur = db.config.usiaAwal + selisihMgg;
+        // Perhitungan Umur Ayam
+        const tglMasukObj = new Date(db.config.tglMasuk);
+        const hariIni = new Date();
+        const selisihHari = Math.floor((hariIni - tglMasukObj) / (1000 * 60 * 60 * 24));
+        const selisihMinggu = Math.floor(selisihHari / 7);
+        const umurSekarang = db.config.usiaAwal + selisihMinggu;
 
-        // Analisa ROI
-        const totalProfitGlobal = db.stok.totalProfitApp + (db.config.profitLalu || 0);
-        const persenROI = db.config.modalAwal > 0 ? (totalProfitGlobal / db.config.modalAwal * 100) : 0;
+        // Perhitungan ROI (Return on Investment)
+        const profitGlobal = db.stok.totalProfitApp + (db.config.profitLalu || 0);
+        const persenROI = db.config.modalAwal > 0 ? (profitGlobal / db.config.modalAwal * 100) : 0;
         
         document.getElementById('roi-bar').style.width = Math.min(persenROI, 100) + "%";
-        document.getElementById('roi-text').innerText = `Progres: ${persenROI.toFixed(1)}% (Rp ${Math.round(totalProfitGlobal).toLocaleString()} / Rp ${db.config.modalAwal.toLocaleString()})`;
+        document.getElementById('roi-text').innerText = `Balik Modal: ${persenROI.toFixed(1)}% (Rp ${Math.round(profitGlobal).toLocaleString()} / Rp ${db.config.modalAwal.toLocaleString()})`;
 
+        let fcrTerakhir = db.logs.length > 0 ? db.logs[db.logs.length - 1].fcr : 0;
+        
         document.getElementById('analisa-text').innerHTML = `
-            Umur: <b>${umur} Mgg</b> | Afkir: <b>${80-umur} Mgg lagi</b><br>
-            FCR: <b>${(db.logs.length ? db.logs[db.logs.length-1].fcr : 0).toFixed(2)}</b>
+            Ayam Usia: <b>${umurSekarang} Minggu</b><br>
+            Sisa Masa Produktif: <b>${80 - umurSekarang} Minggu lagi</b><br>
+            FCR Hari Ini: <b>${fcrTerakhir.toFixed(2)}</b>
         `;
-        localStorage.setItem('bumdes_v45_pro', JSON.stringify(db));
+        
+        // Simpan setiap ada perubahan
+        localStorage.setItem('bumdes_v47_complete', JSON.stringify(db));
     }
 
+    // Fungsi Simpan Input Harian
     function simpanHarian() {
+        const tgl = document.getElementById('in-tgl').value;
         const kg = parseFloat(document.getElementById('in-kg').value);
+        const rusak = parseInt(document.getElementById('in-rusak').value) || 0;
         const pakan = parseFloat(document.getElementById('in-pakan').value);
         const harga = parseFloat(document.getElementById('in-harga').value);
-        if(!kg || !pakan || !harga) return alert("Mohon lengkapi data!");
 
-        const costProd = (pakan * db.config.hPakan) + db.config.ops;
-        const profitHariIni = (kg * harga) - costProd;
-        const tabPullet = kg * 1000;
+        if(!tgl || !kg || !pakan || !harga) {
+            alert("Mohon isi semua data produksi!");
+            return;
+        }
 
-        db.logs.push({ 
-            tgl: document.getElementById('in-tgl').value, kg, pakan, harga, 
-            rusak: document.getElementById('in-rusak').value || 0,
-            fcr: pakan/kg, hpp: costProd/kg,
-            totalJual: kg*harga
+        const biayaPakanHariIni = pakan * db.config.hPakan;
+        const hppKg = (biayaPakanHariIni + db.config.ops) / kg;
+        const omzet = kg * harga;
+        const profitBersih = omzet - biayaPakanHariIni - db.config.ops;
+        const tabunganPullet = kg * 1000; // Dana cadangan beli ayam baru
+
+        // Masukkan ke log
+        db.logs.push({
+            tgl, kg, rusak, pakan, harga,
+            fcr: pakan / kg,
+            hpp: hppKg,
+            totalJual: omzet,
+            danaPullet: tabunganPullet
         });
 
+        // Update Stok & Kas
         db.stok.pakan -= pakan;
-        db.stok.kas += ((kg * harga) - tabPullet);
-        db.stok.pullet += tabPullet;
-        db.stok.totalProfitApp += profitHariIni;
+        db.stok.kas += (omzet - tabunganPullet);
+        db.stok.pullet += tabunganPullet;
+        db.stok.totalProfitApp += profitBersih;
 
         updateUI();
-        alert("Data Tersimpan!");
+        alert("Data Berhasil Disimpan!");
         nav(document.querySelector('.nav-item'), 'dash');
     }
 
+    // Render Tabel Laporan
     function renderRekap() {
         const tbody = document.querySelector('#table-rekap tbody');
         tbody.innerHTML = "";
-        let tKg = 0, tUang = 0, tRusak = 0;
-        db.logs.slice().reverse().forEach(l => {
-            tKg += l.kg; tUang += l.totalJual; tRusak += parseInt(l.rusak);
-            tbody.innerHTML += `<tr><td>${l.tgl}</td><td>${l.kg}</td><td>${l.rusak}</td><td>${l.fcr.toFixed(2)}</td><td>${Math.round(l.hpp)}</td><td>${l.totalJual.toLocaleString()}</td></tr>`;
+        let totalKg = 0, totalOmzet = 0, totalRusak = 0;
+
+        // Urutkan data terbaru di atas
+        const sortedLogs = [...db.logs].reverse();
+
+        sortedLogs.forEach(l => {
+            totalKg += l.kg;
+            totalOmzet += l.totalJual;
+            totalRusak += parseInt(l.rusak);
+            
+            const row = `<tr>
+                <td>${l.tgl.split('-').reverse().slice(0,2).join('/')}</td>
+                <td>${l.kg.toFixed(1)}</td>
+                <td>${l.rusak}</td>
+                <td>${l.fcr.toFixed(2)}</td>
+                <td>${Math.round(l.hpp).toLocaleString()}</td>
+                <td>${Math.round(l.totalJual).toLocaleString()}</td>
+            </tr>`;
+            tbody.innerHTML += row;
         });
-        document.getElementById('rekap-total').innerHTML = `PRODUKSI: ${tKg.toFixed(1)} Kg | BS: ${tRusak} Btr<br>OMZET: Rp ${tUang.toLocaleString()}`;
+
+        document.getElementById('rekap-total').innerHTML = `
+            <div style="display:flex; justify-content:space-between">
+                <span>Total Telur Layak:</span> <span>${totalKg.toFixed(1)} Kg</span>
+            </div>
+            <div style="display:flex; justify-content:space-between">
+                <span>Total Telur Rusak:</span> <span>${totalRusak} Butir</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; color: var(--primary); font-size:15px">
+                <span>Total Omzet:</span> <span>Rp ${totalOmzet.toLocaleString()}</span>
+            </div>
+        `;
+    }
+
+    // Admin Functions
+    function loadAdminFields() {
+        document.getElementById('set-modal-awal').value = db.config.modalAwal;
+        document.getElementById('set-profit-lalu').value = db.config.profitLalu;
+        document.getElementById('set-h-pakan').value = db.config.hPakan;
+        document.getElementById('set-ops').value = db.config.ops;
+        document.getElementById('set-ayam').value = db.stok.ayam;
     }
 
     function saveSettings() {
         db.config.modalAwal = parseFloat(document.getElementById('set-modal-awal').value) || 0;
         db.config.profitLalu = parseFloat(document.getElementById('set-profit-lalu').value) || 0;
-        db.config.hPakan = parseFloat(document.getElementById('set-h-pakan').value);
-        db.config.ops = parseFloat(document.getElementById('set-ops').value);
+        db.config.hPakan = parseFloat(document.getElementById('set-h-pakan').value) || 0;
+        db.config.ops = parseFloat(document.getElementById('set-ops').value) || 0;
         updateUI();
-        alert("Pengaturan Berhasil Disimpan!");
+        alert("Konfigurasi modal dan biaya berhasil disimpan!");
     }
 
     function updateStok() {
-        if(document.getElementById('set-ayam').value) db.stok.ayam = document.getElementById('set-ayam').value;
-        db.stok.pakan += parseFloat(document.getElementById('set-pakan-tambah').value) || 0;
+        const nAyam = parseInt(document.getElementById('set-ayam').value);
+        const nPakan = parseFloat(document.getElementById('set-pakan-tambah').value) || 0;
+        if(nAyam) db.stok.ayam = nAyam;
+        db.stok.pakan += nPakan;
+        document.getElementById('set-pakan-tambah').value = "";
         updateUI();
-        alert("Stok Populasi & Pakan Diupdate!");
+        alert("Stok populasi dan pakan telah diperbarui!");
     }
 
+    // Data Management
     function backupData() {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
         const downloadAnchor = document.createElement('a');
         downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchorAnchor.setAttribute("download", "BUMDes_Backup.json");
+        downloadAnchor.setAttribute("download", "BACKUP_BUMDES_" + new Date().toISOString().slice(0,10) + ".json");
+        document.body.appendChild(downloadAnchor);
         downloadAnchor.click();
+        downloadAnchor.remove();
     }
 
     function importData() {
         const file = document.getElementById('importFile').files[0];
-        if (!file) return alert("Pilih file backup!");
+        if (!file) return alert("Pilih file backup dahulu!");
         const reader = new FileReader();
         reader.onload = function(e) {
-            db = JSON.parse(e.target.result);
-            updateUI();
-            alert("Data Berhasil di-Restore!");
+            try {
+                const imported = JSON.parse(e.target.result);
+                if(confirm("Timpa data saat ini dengan data backup?")) {
+                    db = imported;
+                    updateUI();
+                    alert("Data berhasil dipulihkan!");
+                }
+            } catch (err) { alert("File tidak valid!"); }
         };
         reader.readAsText(file);
     }
 
     function exportExcel() {
+        if(db.logs.length === 0) return alert("Tidak ada data untuk diexport.");
         const ws = XLSX.utils.json_to_sheet(db.logs);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Laporan");
-        XLSX.writeFile(wb, "Laporan_BUMDes.xlsx");
+        XLSX.utils.book_append_sheet(wb, ws, "Laporan Produksi");
+        XLSX.writeFile(wb, "LAPORAN_BUMDES_CAMPUREJO.xlsx");
     }
 
-    function resetData() { if(confirm("Hapus semua data?")) { localStorage.clear(); location.reload(); } }
-    
+    function resetData() {
+        if(confirm("PERINGATAN! Semua data produksi dan modal akan dihapus permanen. Lanjutkan?")) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
+
+    // Jalankan UI pertama kali
     document.getElementById('in-tgl').valueAsDate = new Date();
     updateUI();
 </script>
